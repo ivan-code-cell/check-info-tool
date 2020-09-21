@@ -3,7 +3,6 @@ import tkinter.font as tf
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
-import os
 
 
 class Application(tk.Tk):

@@ -9,13 +9,13 @@ from parse_test_instance import ParseTestInstance
 from common import unzip, format_str
 import collections
 import tkinter as tk
-import shutil
 import os
 import re
 import datetime
 import xlwt
 import xlrd
 import traceback
+
 
 class LastFlowInfo:
     dc_spec_name = None
@@ -24,12 +24,12 @@ class LastFlowInfo:
 
 
 class CheckInfo:
-    def __init__(self):
+    def __init__(self, temp_directory):
         self.power_order_path = ''
         self.pattern_path = ''
         self.job_list_dict = ''
         self.flow_table_set = set()
-        self.device_directory = ''
+        self.device_directory = temp_directory
         self.work_sheet = None
         self.text = None
         self.last_flow_info = LastFlowInfo()
@@ -45,13 +45,13 @@ class CheckInfo:
         if os.path.isdir(device_path):
             self.device_directory = device_path
         else:
-            self.device_directory = unzip(device_path)
-            device_name = device_path.split('/')[-1]
-            if os.path.isdir(os.path.join(self.device_directory, device_name.split('.')[0])):
-                self.device_directory = os.path.join(self.device_directory, device_name.split('.')[0])
+            unzip(device_path, self.device_directory)
+            device_name = os.path.join(self.device_directory, os.path.basename(device_path))
+            device_name = os.path.splitext(device_name)[0]
+            if os.path.isdir(device_name):
+                self.device_directory = device_name
             else:
                 pass
-
         job_list_pattern = re.compile(r'job.*list', re.IGNORECASE)
         job_list_path = ''
         for file_name in os.listdir(self.device_directory):
@@ -85,14 +85,10 @@ class CheckInfo:
             self.__put_data_log('Output file path is: ' + output_name)
             self.__put_data_log('Execution successful!!!')
             self.__put_data_log('===============================END===============================')
-            if os.path.isdir(self.device_directory) and 'CheckInfoWorkSpace' in self.device_directory:
-                shutil.rmtree(self.device_directory)
         except Exception as e:
             self.__put_data_log('An exception occurred!Please check!!!')
             self.__put_data_log(str(e))
             traceback.print_exc()
-            if os.path.isdir(self.device_directory) and 'CheckInfoWorkSpace' in self.device_directory:
-                shutil.rmtree(self.device_directory)
 
     def __put_data_log(self, data_log):
         self.text.insert(tk.END, data_log + '\n')

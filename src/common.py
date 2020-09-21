@@ -1,24 +1,15 @@
 import zipfile
-import os
-import shutil
 
 
-def unzip(file_name):
+def unzip(file_name, path):
     unzip_format = zipfile.is_zipfile(file_name)
     if unzip_format:
         zip_file = zipfile.ZipFile(file_name)
-        file_list = file_name.split('/')
-        file_list[-1] = 'CheckInfoWorkSpace'
-        file_path = '/'.join(file_list)
-        if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-        os.mkdir(file_path)
         for names in zip_file.namelist():
-            zip_file.extract(names, file_path + '/')
+            zip_file.extract(names, path + '/')
         zip_file.close()
     else:
         print('Need Zip Format, Please Check!!!')
-    return file_path
 
 
 def format_str(target_str):

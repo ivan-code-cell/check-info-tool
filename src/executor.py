@@ -1,6 +1,9 @@
 from check_info import CheckInfo
 from gui_application import Application, Menu
-check_info = CheckInfo()
-app = Application(check_info)
-app.add_menu(Menu)
-app.mainloop()
+from tempfile import TemporaryDirectory
+
+
+with TemporaryDirectory() as temp_directory:
+    app = Application(CheckInfo(temp_directory))
+    app.add_menu(Menu)
+    app.mainloop()
